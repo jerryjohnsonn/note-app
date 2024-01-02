@@ -8,6 +8,7 @@ class NoteApp extends React.Component{
     super(props)
     this.state = {
       notes: data(),
+      searchedNotes: null,
     }
 
     this.onDeleteHandler = this.onDeleteHandler.bind(this);
@@ -16,13 +17,21 @@ class NoteApp extends React.Component{
   }
 
   onDeleteHandler(id){
+    // Delete ketika searchBar tidak ada input dan ketika ada input
     const notes = this.state.notes.filter(note => note.id !== id);
+    // const searchedNote = this.state.searchedNotes.filter(note => note.id !== id);
     this.setState({ notes });
   }
 
   searchingNoteHandler(title){
-    const notes = this.state.notes.filter(note => (note.title).includes === title);
-    this.setState({ notes });
+    if(title) {
+      const searchedNotes = this.state.notes.filter(note => (note.title.toLowerCase()).includes(title.toLowerCase()));
+      this.setState({ searchedNotes: searchedNotes })
+      console.log("Bagian Searched Notes");
+      console.log(this.state.searchedNotes);
+    } else {
+      this.setState({ searchedNotes: null })
+    }
   }
 
   addingNoteHandler({title, body}) {
@@ -34,19 +43,20 @@ class NoteApp extends React.Component{
             id: +new Date(),
             title,
             body,
-            createdAt: new Date().toLocaleDateString('id-ID'),
+            createdAt: new Date(),
             archived: false,
           }
         ]
       }
     })
+    console.log(this.state.notes);
   }
 
   render(){
     return (
       <div className="note-app">
         <NoteAppHeader searchingNoteHandler={this.searchingNoteHandler}/>
-        <NoteAppBody notes={this.state.notes} onDeleteHandler={this.onDeleteHandler} addingNewNoteHandler={this.addingNoteHandler}/> 
+        <NoteAppBody searchedNotes={this.state.searchedNotes} notes={this.state.notes} onDeleteHandler={this.onDeleteHandler} addingNewNoteHandler={this.addingNoteHandler}/> 
       </div>
     )
   }
